@@ -34,17 +34,22 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} "mkdir -p /root/deployment"
       
+      - name: Generate .env file
+        run: |
+          echo "MSSQL_SA_PASSWORD=${{ secrets.MSSQL_SA_PASSWORD }}" > .env
+
       - name: Upload files to remote server
         run: |
           scp -o StrictHostKeyChecking=no ./docker-compose-deploy.yml root@${{ secrets.DROPLET_IP }}:/root/deployment/
           scp -o StrictHostKeyChecking=no ./src/nginx/nginx.conf root@${{ secrets.DROPLET_IP }}:/root/deployment/
+          scp -o StrictHostKeyChecking=no .env root@${{ secrets.DROPLET_IP }}:/root/deployment/
 
       - name: Deploy with Docker Compose
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} << 'EOF'
             cd /root/deployment
-            docker-compose -f docker-compose-deploy.yml pull
-            docker-compose -f docker-compose-deploy.yml down
-            docker-compose -f docker-compose-deploy.yml up -d
+            docker-compose --env-file .env -f docker-compose-deploy.yml pull
+            docker-compose --env-file .env -f docker-compose-deploy.yml down
+            docker-compose --env-file .env -f docker-compose-deploy.yml up -d
           EOF
           
