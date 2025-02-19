@@ -1,0 +1,9 @@
+@web_api_HostAddress = http://localhost:5001
+
+POST {{web_api_HostAddress}}/DebtController/update/
+Accept: application/json
+
+GET {{web_api_HostAddress}}/DebtController/read/
+Accept: application/json
+
+###
