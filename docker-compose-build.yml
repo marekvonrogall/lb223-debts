@@ -3,4 +3,4 @@ services:
   debt-api:
     build:
       context: ./src/web-api
-    image: ghcr.io/${IMAGE_NAME}/debt-api:latest
+    #image: ghcr.io/${IMAGE_NAME}/debt-api:latest

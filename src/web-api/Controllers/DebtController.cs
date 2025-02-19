@@ -12,7 +12,7 @@ public class DebtController : ControllerBase
         //Modify debt in database
         return Ok(new
         {
-            "Debt modified"
+            message = "Debt modified"
         });
     }
 
@@ -22,7 +22,7 @@ public class DebtController : ControllerBase
         // Read debt from database
         return Ok(new
         {
-            "debt: ????"
+            debt = "placeholder"
         });
     }
 }
