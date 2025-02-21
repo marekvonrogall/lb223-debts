@@ -12,6 +12,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - mssql
+      - web-api
   
   # SQL Server Express
   mssql:
@@ -26,6 +27,10 @@ services:
     restart: always
     volumes:
       - mssql_data:/var/opt/mssql
+    
+  # Web API
+  web-api:
+    image: ghcr.io/marekvonrogall/lb223-debts/debt-api:latest
 
 volumes:
   mssql_data:
