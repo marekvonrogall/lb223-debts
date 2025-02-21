@@ -31,6 +31,8 @@ services:
   # Web API
   web-api:
     image: ghcr.io/marekvonrogall/lb223-debts/debt-api:latest
+    environment:
+      SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
 
 volumes:
   mssql_data:
