@@ -6,7 +6,7 @@ namespace web_api.Controllers;
 [Route("[controller]")]
 public class DebtController : ControllerBase
 {
-    [HttpPost(Name = "update")]
+    [HttpPost("update")]
     public async Task<IActionResult> ModifyDebt()
     {
         //Modify debt in database
@@ -16,7 +16,7 @@ public class DebtController : ControllerBase
         });
     }
 
-    [HttpGet(Name = "read")]
+    [HttpGet("read")]
     public async Task<IActionResult> ReadDebt()
     {
         // Read debt from database
