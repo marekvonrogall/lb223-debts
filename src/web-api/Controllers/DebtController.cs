@@ -7,7 +7,7 @@ namespace web_api.Controllers;
 [Route("[controller]")]
 public class DebtController : ControllerBase
 {
-    private const string ConnectionString = "Server=lb223.vrmarek.me,1433; Database=lb223; User Id=sa; Password={0};";
+    private string ConnectionString => $"Server=lb223.vrmarek.me,1433; Database=lb223; User Id=sa; Password={Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD")};";
     
     [HttpGet("ping")]
     public async Task<IActionResult> Ping()
