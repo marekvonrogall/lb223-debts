@@ -20,14 +20,21 @@ namespace debt_client
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ApiService apiService = new ApiService();
         public MainWindow()
         {
             InitializeComponent();
+            UpdateDebt();
+        }
+
+        private async void UpdateDebt()
+        {
+            LabelCurrentDebt.Content = await apiService.GetDebt();
         }
 
         private void ButtonNewExpense_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         private void ButtonDeposit_Click(object sender, RoutedEventArgs e)
