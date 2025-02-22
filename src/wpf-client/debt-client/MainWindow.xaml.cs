@@ -24,5 +24,15 @@ namespace debt_client
         {
             InitializeComponent();
         }
+
+        private void ButtonNewExpense_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonDeposit_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
