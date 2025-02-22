@@ -18,25 +18,62 @@ public class DebtController : ControllerBase
         });
     }
 
-    [HttpPut("update")]
-    public async Task<IActionResult> ModifyDebt([FromBody] decimal newDebt)
+    [HttpPut("add")]
+    public async Task<IActionResult> AddDebt([FromBody] decimal amount)
     {
-        if (newDebt < 0)
+        if (amount <= 0)
         {
-            return BadRequest(new { message = "Invalid input" });
+            return BadRequest(new { message = "Amount must be greater than zero" });
         }
 
         using (SqlConnection conn = new SqlConnection(ConnectionString))
         {
             await conn.OpenAsync();
-            string query = "UPDATE Debts SET debt = @NewDebt WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
+        
+            string query = "UPDATE Debts SET debt = debt + @Amount WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
+        
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                cmd.Parameters.AddWithValue("@NewDebt", newDebt);
+                cmd.Parameters.AddWithValue("@Amount", amount);
                 int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
                 if (rowsAffected > 0)
                 {
-                    return Ok(new { message = "Debt modified" });
+                    return Ok(new { message = "Debt increased" });
+                }
+                return NotFound(new { message = "Debt not found" });
+            }
+        }
+    }
+
+    [HttpPut("subtract")]
+    public async Task<IActionResult> SubtractDebt([FromBody] decimal amount)
+    {
+        if (amount <= 0)
+        {
+            return BadRequest(new { message = "Amount must be greater than zero" });
+        }
+
+        using (SqlConnection conn = new SqlConnection(ConnectionString))
+        {
+            await conn.OpenAsync();
+
+            string query = @"
+                UPDATE Debts 
+                SET debt = CASE 
+                    WHEN debt - @Amount < 0 THEN 0 
+                    ELSE debt - @Amount 
+                END
+                WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@Amount", amount);
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return Ok(new { message = "Debt decreased" });
                 }
                 return NotFound(new { message = "Debt not found" });
             }

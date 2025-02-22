@@ -1,6 +1,9 @@
 @web_api_HostAddress = http://localhost:5001
 
-PUT {{web_api_HostAddress}}/Debt/update/
+PUT {{web_api_HostAddress}}/Debt/subtract/
+Accept: application/json
+
+PUT {{web_api_HostAddress}}/Debt/add/
 Accept: application/json
 
 GET {{web_api_HostAddress}}/Debt/read/
