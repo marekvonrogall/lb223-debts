@@ -17,7 +17,7 @@ namespace debt_client
         private async void UpdateDebt()
         {
             decimal? debt = await debtService.GetDebt();
-            LabelCurrentDebt.Content = debt.HasValue ? $"CHF {debt.Value.ToString("F2")}" : "The API could not be reached!";
+            LabelCurrentDebt.Content = debt.HasValue ? $"CHF {debt.Value.ToString("F2")}" : "Could not reach API";
             TextBoxInput.Text = string.Empty;
         }
 
