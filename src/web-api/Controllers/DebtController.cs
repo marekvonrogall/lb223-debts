@@ -29,19 +29,30 @@ public class DebtController : ControllerBase
         using (SqlConnection conn = new SqlConnection(ConnectionString))
         {
             await conn.OpenAsync();
-        
-            string query = "UPDATE Debts SET debt = debt + @Amount WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
-        
-            using (SqlCommand cmd = new SqlCommand(query, conn))
+            using (SqlTransaction transaction = conn.BeginTransaction())
             {
-                cmd.Parameters.AddWithValue("@Amount", amount);
-                int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-                if (rowsAffected > 0)
+                try
                 {
-                    return Ok(new { message = "Debt increased" });
+                    string query = "UPDATE Debts SET debt = debt + @Amount WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
+        
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Amount", amount);
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            return Ok(new { message = "Debt increased" });
+                        }
+                        transaction.Rollback();
+                        return NotFound(new { message = "Debt not found" });
+                    }
                 }
-                return NotFound(new { message = "Debt not found" });
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return StatusCode(500, new { message = "Internal server error" });
+                }
             }
         }
     }
@@ -57,25 +68,37 @@ public class DebtController : ControllerBase
         using (SqlConnection conn = new SqlConnection(ConnectionString))
         {
             await conn.OpenAsync();
-
-            string query = @"
-                UPDATE Debts 
-                SET debt = CASE 
-                    WHEN debt - @Amount < 0 THEN 0 
-                    ELSE debt - @Amount 
-                END
-                WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
-
-            using (SqlCommand cmd = new SqlCommand(query, conn))
+            using (SqlTransaction transaction = conn.BeginTransaction())
             {
-                cmd.Parameters.AddWithValue("@Amount", amount);
-                int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-                if (rowsAffected > 0)
+                try
                 {
-                    return Ok(new { message = "Debt decreased" });
+
+                    string query = @"
+                        UPDATE Debts 
+                        SET debt = CASE 
+                            WHEN debt - @Amount < 0 THEN 0 
+                            ELSE debt - @Amount 
+                        END
+                        WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Amount", amount);
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            return Ok(new { message = "Debt decreased" });
+                        }
+                        transaction.Rollback();
+                        return NotFound(new { message = "Debt not found" });
+                    }
                 }
-                return NotFound(new { message = "Debt not found" });
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return StatusCode(500, new { message = "Internal server error" });
+                }
             }
         }
     }
