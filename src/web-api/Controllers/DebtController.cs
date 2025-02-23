@@ -18,7 +18,7 @@ public class DebtController : ControllerBase
         });
     }
 
-    [HttpPut("add")]
+    [HttpPost("add")]
     public async Task<IActionResult> AddDebt([FromBody] decimal amount)
     {
         if (amount <= 0)
@@ -46,7 +46,7 @@ public class DebtController : ControllerBase
         }
     }
 
-    [HttpPut("subtract")]
+    [HttpPost("subtract")]
     public async Task<IActionResult> SubtractDebt([FromBody] decimal amount)
     {
         if (amount <= 0)

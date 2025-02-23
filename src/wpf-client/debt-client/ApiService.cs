@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -24,6 +25,19 @@ namespace debt_client
                 return responseDict.ContainsKey("debt") ? responseDict["debt"] : null;
             }
             return null;
+        }
+        public async Task<bool> AddDebt(decimal amount)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(new { number = amount }), Encoding.UTF8, "application/json");
+            using HttpResponseMessage response = await SharedClient.PostAsync("add", content);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> SubtractDebt(decimal amount)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(new { number = amount }), Encoding.UTF8, "application/json");
+            using HttpResponseMessage response = await SharedClient.PostAsync("subtract", content);
+            return response.IsSuccessStatusCode;
         }
     }
 }
