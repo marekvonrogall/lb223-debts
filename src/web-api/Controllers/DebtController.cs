@@ -35,13 +35,14 @@ public class DebtController : ControllerBase
                 {
                     string query = "UPDATE Debts SET debt = debt + @Amount WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
         
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
                     {
                         cmd.Parameters.AddWithValue("@Amount", amount);
                         int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
                         if (rowsAffected > 0)
                         {
+                            transaction.Commit();
                             return Ok(new { message = "Debt increased" });
                         }
                         transaction.Rollback();
@@ -81,13 +82,14 @@ public class DebtController : ControllerBase
                         END
                         WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
 
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
                     {
                         cmd.Parameters.AddWithValue("@Amount", amount);
                         int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
                         if (rowsAffected > 0)
                         {
+                            transaction.Commit();
                             return Ok(new { message = "Debt decreased" });
                         }
                         transaction.Rollback();
