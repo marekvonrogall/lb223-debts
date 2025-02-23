@@ -33,7 +33,7 @@ public class DebtController : ControllerBase
             {
                 try
                 {
-                    string query = "UPDATE Debts SET debt = debt + @Amount WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
+                    string query = "UPDATE Debts SET debt = debt + @Amount";
         
                     using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
                     {
@@ -73,15 +73,25 @@ public class DebtController : ControllerBase
             {
                 try
                 {
+                    string checkQuery = "SELECT TOP 1 debt FROM Debts";
+                    using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn, transaction))
+                    {
+                        object result = await checkCmd.ExecuteScalarAsync();
+                        if (result == null)
+                        {
+                            transaction.Rollback();
+                            return NotFound(new { message = "Debt not found" });
+                        }
 
-                    string query = @"
-                        UPDATE Debts 
-                        SET debt = CASE 
-                            WHEN debt - @Amount < 0 THEN 0 
-                            ELSE debt - @Amount 
-                        END
-                        WHERE (SELECT MIN(debt) FROM Debts) IS NOT NULL";
+                        decimal currentDebt = Convert.ToDecimal(result);
+                        if (amount > currentDebt)
+                        {
+                            transaction.Rollback();
+                            return BadRequest(new { message = "Deposit exceeds available debt" });
+                        }
+                    }
 
+                    string query = "UPDATE Debts SET debt = debt - @Amount";
                     using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
                     {
                         cmd.Parameters.AddWithValue("@Amount", amount);
