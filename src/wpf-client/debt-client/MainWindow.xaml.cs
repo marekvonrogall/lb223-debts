@@ -30,5 +30,10 @@ namespace debt_client
             await apiService.SubtractDebt(decimal.Parse(TextBoxInput.Text));
             UpdateDebt();
         }
+
+        private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateDebt();
+        }
     }
 }

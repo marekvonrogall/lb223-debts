@@ -12,6 +12,7 @@
         <TextBox x:Name="TextBoxInput" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="156" Cursor="IBeam" Margin="0,247,0,0"/>
         <Button x:Name="ButtonNewExpense" Content="Register new Expense" HorizontalAlignment="Center" Margin="0,270,0,0" VerticalAlignment="Top" Width="156" Background="White" Cursor="Hand" Click="ButtonNewExpense_Click"/>
         <Button x:Name="ButtonDeposit" Content="Make a Deposit" HorizontalAlignment="Center" Margin="0,295,0,0" VerticalAlignment="Top" Width="156" Background="White" Cursor="Hand" Click="ButtonDeposit_Click"/>
+        <Button x:Name="ButtonUpdate" Content="Update Debt" HorizontalAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" Width="156" Background="White" Cursor="Hand" Click="ButtonUpdate_Click"/>
 
     </Grid>
 </Window>
