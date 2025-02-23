@@ -26,18 +26,22 @@ namespace debt_client
             }
             return null;
         }
-        public async Task<bool> AddDebt(decimal amount)
+        public async Task<string> AddDebt(decimal amount)
         {
             var content = new StringContent(JsonSerializer.Serialize(amount), Encoding.UTF8, "application/json");
             using HttpResponseMessage response = await SharedClient.PostAsync("add", content);
-            return response.IsSuccessStatusCode;
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var responseDict = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonResponse);
+            return responseDict.ContainsKey("message") ? responseDict["message"] : null;
         }
 
-        public async Task<bool> SubtractDebt(decimal amount)
+        public async Task<string> SubtractDebt(decimal amount)
         {
             var content = new StringContent(JsonSerializer.Serialize(amount), Encoding.UTF8, "application/json");
             using HttpResponseMessage response = await SharedClient.PostAsync("subtract", content);
-            return response.IsSuccessStatusCode;
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var responseDict = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonResponse);
+            return responseDict.ContainsKey("message") ? responseDict["message"] : null;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace debt_client
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ApiService apiService = new ApiService();
+        private readonly DebtService debtService = new DebtService();
         public MainWindow()
         {
             InitializeComponent();
@@ -16,18 +16,22 @@ namespace debt_client
 
         private async void UpdateDebt()
         {
-            LabelCurrentDebt.Content = await apiService.GetDebt();
+            decimal? debt = await debtService.GetDebt();
+            LabelCurrentDebt.Content = debt.HasValue ? $"CHF {debt.Value.ToString("F2")}" : "The API could not be reached!";
+            TextBoxInput.Text = string.Empty;
         }
 
         private async void ButtonNewExpense_Click(object sender, RoutedEventArgs e)
         {
-            await apiService.AddDebt(decimal.Parse(TextBoxInput.Text));
+            string message = await debtService.AddDebt(TextBoxInput.Text);
+            MessageBox.Show(message, "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             UpdateDebt();
         }
 
         private async void ButtonDeposit_Click(object sender, RoutedEventArgs e)
         {
-            await apiService.SubtractDebt(decimal.Parse(TextBoxInput.Text));
+            string message = await debtService.SubtractDebt(TextBoxInput.Text);
+            MessageBox.Show(message, "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             UpdateDebt();
         }
 
