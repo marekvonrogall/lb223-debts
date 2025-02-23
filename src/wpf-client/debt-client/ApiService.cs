@@ -28,14 +28,14 @@ namespace debt_client
         }
         public async Task<bool> AddDebt(decimal amount)
         {
-            var content = new StringContent(JsonSerializer.Serialize(new { number = amount }), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonSerializer.Serialize(amount), Encoding.UTF8, "application/json");
             using HttpResponseMessage response = await SharedClient.PostAsync("add", content);
             return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> SubtractDebt(decimal amount)
         {
-            var content = new StringContent(JsonSerializer.Serialize(new { number = amount }), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonSerializer.Serialize(amount), Encoding.UTF8, "application/json");
             using HttpResponseMessage response = await SharedClient.PostAsync("subtract", content);
             return response.IsSuccessStatusCode;
         }
